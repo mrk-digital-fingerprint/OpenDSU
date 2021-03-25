@@ -22,7 +22,7 @@ const versions = (powerfulKeySSI, authToken, callback) => {
         callback = authToken;
         authToken = undefined;
     }
-    
+
     const dlDomain = powerfulKeySSI.getDLDomain();
     const anchorId = powerfulKeySSI.getAnchorId();
 
@@ -139,6 +139,7 @@ function createDigitalProof(powerfulKeySSI, newHashLinkIdentifier, lastHashLinkI
     if (lastHashLinkIdentifier) {
         dataToSign += lastHashLinkIdentifier;
     }
+    console.log('powerfulKeySSI', powerfulKeySSI, powerfulKeySSI.getTypeName(), powerfulKeySSI.getIdentifier(true))
 
     let ssiType = powerfulKeySSI.getTypeName();
     switch(ssiType){
@@ -160,6 +161,17 @@ function createDigitalProof(powerfulKeySSI, newHashLinkIdentifier, lastHashLinkI
         case constants.KEY_SSIS.WALLET_SSI:
             return callback(undefined, {signature:"",publicKey:""})
         default:
+            // crypto.sign(powerfulKeySSI, dataToSign, (err, signature) => {
+            //     if (err) {
+            //         return OpenDSUSafeCallback(callback)(createOpenDSUErrorWrapper(`Failed to sign data`, err));
+            //     }
+            //     const digitalProof = {
+            //         signature: crypto.encodeBase58(signature),
+            //         publicKey: crypto.encodeBase58(powerfulKeySSI.getPublicKey("raw"))
+            //     };
+            //     return callback(undefined, digitalProof);
+            // });
+            // break;
             const securityContext = sc.createSecurityContext();
             const keySSI = securityContext.getKeySSI(powerfulKeySSI);
             securityContext.sign(powerfulKeySSI, dataToSign, (err, signature) => {
